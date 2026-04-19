@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.5.0">
+<Project Sdk="Godot.NET.Sdk/4.6.2">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -11,12 +11,14 @@
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="dotnet build $(ProjectDir)/../Mirage.Core/Mirage.CodeGen/Mirage.CodeGen.csproj -c Release" />
-    <Exec Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen.exe $(TargetPath) -force" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen.exe $(TargetPath) -force" />
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen $(TargetPath) -force" />
     <Error Condition="$(ExitCode) == 1" />
   </Target>
   <Target Name="PrePublish" BeforeTargets="Publish">
     <Exec Command="dotnet build $(ProjectDir)/../Mirage.Core/Mirage.CodeGen/Mirage.CodeGen.csproj -c Release" />
-    <Exec Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="$(ProjectDir)../Mirage.Core/Mirage.CodeGen/bin/Release/net8.0/Mirage.CodeGen $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
     <Error Condition="$(ExitCode) == 1" />
   </Target>
 </Project>
