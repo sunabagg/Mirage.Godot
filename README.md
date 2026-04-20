@@ -43,12 +43,14 @@ Open a command prompt at the shared parent directory.
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="dotnet build ..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\Mirage.CodeGen.csproj -c Release" />
-    <Exec Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen.exe $(TargetPath) -force" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen.exe $(TargetPath) -force" />
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen $(TargetPath) -force" />
     <Error Condition="$(ExitCode) == 1" />
   </Target>
   <Target Name="PrePublish" BeforeTargets="Publish">
-    <Exec Command="dotnet build ..\Mirage.Godot\Mirage.Core\Mirage.CodeGen\Mirage.CodeGen.csproj -c Release" />
-    <Exec Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+    <Exec Command="dotnet build ..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\Mirage.CodeGen.csproj -c Release" />
+    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+    <Exec Condition=" '$(OS)' == 'Unix' " Command="..\Mirage.Godot\src\Mirage.Core\Mirage.CodeGen\bin\Release\net8.0\Mirage.CodeGen $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
     <Error Condition="$(ExitCode) == 1" />
   </Target>
 </Project>
@@ -78,11 +80,13 @@ Mirage.Godot uses Mono.Cecil to modify the c# source code after it is compiled, 
 To Setup add this code to the default csproj for the godot project
 ```xml
 <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-  <Exec Command="path/to/Mirage.CodeGen.exe $(TargetPath) -force" />
+  <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="path/to/Mirage.CodeGen.exe $(TargetPath) -force" />
+  <Exec Condition=" '$(OS)' == 'Unix' " Command="path/to/Mirage.CodeGen $(TargetPath) -force" />
   <Error Condition="$(ExitCode) == 1" />
 </Target>
 <Target Name="PrePublish" BeforeTargets="Publish">
-  <Exec Command="path/to/Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+  <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="path/to/Mirage.CodeGen.exe $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
+  <Exec Condition=" '$(OS)' == 'Unix' " Command="path/to/Mirage.CodeGen $(PublishDir)$(TargetFileName) $(TargetDir) -force" />
   <Error Condition="$(ExitCode) == 1" />
 </Target>
 ```
